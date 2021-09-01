@@ -55,14 +55,8 @@ exports.getAddprospectpage = (req, res, next) => {
 };
 
 exports.postAddprospectpage = (req, res, next) => {
-  const {
-    name,
-    birthday,
-    address,
-    contactno,
-    familydetails,
-    moredetails,
-  } = req.body;
+  const { name, birthday, address, contactno, familydetails, moredetails } =
+    req.body;
   const prospect = new Prospect({
     name: name,
     birthday: birthday,
