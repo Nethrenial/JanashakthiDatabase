@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 
 exports.getLoginpage = (req, res, next) => {
   const user = req.session.user;
@@ -22,7 +22,7 @@ exports.getLoginpage = (req, res, next) => {
 };
 exports.postLoginpage = (req, res, next) => {
   const { username, password } = req.body;
-  console.log(username, password);
+
   User.findOne({ username: username }).then((user) => {
     if (!user) {
       req.flash("error", "Invalid Email or Password!");
@@ -49,7 +49,6 @@ exports.postLoginpage = (req, res, next) => {
 };
 
 exports.logOut = (req, res, next) => {
-  console.log("Logged out");
   req.session.destroy((err) => {
     if (!err) {
       res.redirect("/login");

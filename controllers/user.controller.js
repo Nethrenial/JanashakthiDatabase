@@ -1,12 +1,8 @@
-const { logOut } = require("./auth.controller");
+const express = require("express");
 
-exports.getUserpage = (req, res, next) => {
-  const user = req.session.user;
-  if (user) {
-    res.render("user", {
-      user: user,
-    });
-  } else {
-    res.redirect("/");
-  }
-};
+const router = express.Router();
+const userController = require("../services/user.service");
+
+router.get("/", userController.getUserpage);
+
+module.exports = router;

@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -13,13 +12,13 @@ const URI =
 const PORT = process.env.PORT || 3000;
 //
 
-const userRoutes = require("./routes/user");
-const prospectRoutes = require("./routes/prospects");
-const homeRoutes = require("./routes/home");
-const loginRoutes = require("./routes/auth.login");
-const logoutRoutes = require("./routes/auth.logout");
-const signupRoutes = require("./routes/auth.signup");
-const customerRoutes = require("./routes/customers");
+const userRoutes = require("./controllers/user");
+const prospectRoutes = require("./controllers/prospects");
+const homeRoutes = require("./controllers/home");
+const loginRoutes = require("./controllers/auth.login");
+const logoutRoutes = require("./controllers/auth.logout");
+const signupRoutes = require("./controllers/auth.signup");
+const customerRoutes = require("./controllers/customers");
 const app = express();
 
 const store = new MongoDBStore({
@@ -30,7 +29,7 @@ const store = new MongoDBStore({
 app.set("view engine", "ejs");
 app.set("views", "views");
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: false,
   })
 );
@@ -43,6 +42,7 @@ app.use(
     store: store,
   })
 );
+
 app.use(flash());
 app.use("/user", userRoutes);
 app.use("/prospects", prospectRoutes);
