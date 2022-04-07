@@ -66,6 +66,7 @@ exports.postAddprospectpage = (req, res, next) => {
     moredetails: moredetails,
     agent: req.session.user._id,
   });
+  console.log(prospect);
   Prospect.findOne(
     {
       name: name,

@@ -4,12 +4,12 @@ const Customer = require("../models/customer.model");
 const express = require("express");
 
 const router = express.Router();
-const prospectController = require("../services/prospects.service");
+const prospectService = require("../services/prospects.service");
 
-router.get("/", prospectController.getProspectpage);
+router.get("/", prospectService.getProspectpage);
 
-router.get("/add-prospect", prospectController.getAddprospectpage);
-router.post("/add-prospect", prospectController.postAddprospectpage);
+router.get("/add-prospect", prospectService.getAddprospectpage);
+router.post("/add-prospect", prospectService.postAddprospectpage);
 
 router.get("/:id", (req, res) => {
   Prospect.findById(req.params.id)
