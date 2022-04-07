@@ -19,7 +19,6 @@ exports.getProspectpage = (req, res, next) => {
     Prospect.find({ agent: user._id })
       .countDocuments()
       .then((numProspects) => {
-        console.log(numProspects);
         let totalItems = numProspects;
         return Prospect.find({
           agent: user._id,
@@ -66,7 +65,7 @@ exports.postAddprospectpage = (req, res, next) => {
     moredetails: moredetails,
     agent: req.session.user._id,
   });
-  console.log(prospect);
+
   Prospect.findOne(
     {
       name: name,
@@ -78,9 +77,7 @@ exports.postAddprospectpage = (req, res, next) => {
         if (!prospector) {
           prospect
             .save()
-            .then((response) => {
-              console.log(response);
-            })
+            .then((response) => {})
             .catch((err) => {
               console.log(err);
             });

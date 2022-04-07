@@ -17,7 +17,6 @@ exports.getCustomerpage = (req, res, next) => {
     Customer.find({ agent: user._id })
       .countDocuments()
       .then((numCustomers) => {
-        console.log(numCustomers);
         let totalItems = numCustomers;
         return Customer.find({
           agent: user._id,
@@ -77,7 +76,6 @@ exports.postAddcustomerpage = (req, res, next) => {
   customer
     .save()
     .then((response) => {
-      console.log(response);
       res.redirect("/customers");
     })
     .catch((err) => {
