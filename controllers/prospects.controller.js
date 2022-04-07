@@ -1,99 +1,65 @@
-const Prospect = require("../models/prospect.model");
 const User = require("../models/user.model");
+const Prospect = require("../models/prospect.model");
+const Customer = require("../models/customer.model");
+const express = require("express");
 
-const ITEMS_PER_PAGE = 2;
+const router = express.Router();
+const prospectService = require("../services/prospects.service");
 
-exports.getProspectpage = (req, res, next) => {
-  let page = req.query.page;
-  if (page < 1) {
-    page = 1;
-  }
-  let currentPage = page;
-  let previousPage = page - 1;
-  let nextPage = currentPage + 1;
-  const user = req.session.user;
+router.get("/", prospectService.getProspectpage);
 
-  if (!user) {
-    res.redirect("/");
-  } else {
-    Prospect.find({ agent: user._id })
-      .countDocuments()
-      .then((numProspects) => {
-        console.log(numProspects);
-        let totalItems = numProspects;
-        return Prospect.find({
-          agent: user._id,
+router.get("/add-prospect", prospectService.getAddprospectpage);
+router.post("/add-prospect", prospectService.postAddprospectpage);
+
+router.get("/:id", (req, res) => {
+  Prospect.findById(req.params.id)
+    .then((prospect) => {
+      res.render("single-prospect", {
+        data: prospect,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+router.get("/:id/delete", (req, res) => {
+  Prospect.findByIdAndDelete(req.params.id)
+    .then((response) => {
+      res.redirect("/prospects");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+router.post("/:id/transform", (req, res) => {
+  const { premium, premiumterm } = req.body;
+  Prospect.findById(req.params.id)
+    .then((response) => {
+      const customer = new Customer({
+        name: response.name,
+        address: response.address,
+        birthday: response.birthday,
+        moredetails: response.moredetails,
+        familydetails: response.familydetails,
+        contactno: response.contactno,
+        premium: premium,
+        premiumterm: premiumterm,
+        agent: response.agent,
+      });
+      customer
+        .save()
+        .then((response) => {
+          Prospect.findByIdAndDelete(req.params.id)
+            .then(res.redirect("/user"))
+            .catch((err) => console.log(err));
         })
-          .skip((page - 1) * ITEMS_PER_PAGE)
-          .limit(ITEMS_PER_PAGE)
-          .then((data) => {
-            res.render("prospects", {
-              user: user,
-              data: data,
-              currentPage: currentPage,
-              nextPage: nextPage,
-              previousPage: previousPage,
-              totalItems: totalItems,
-              numOfPages: Math.ceil(totalItems / ITEMS_PER_PAGE),
-              hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-              hasPreviousPage: page > 1,
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch();
-  }
-};
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
-exports.getAddprospectpage = (req, res, next) => {
-  const user = req.session.user;
-  res.status(200).render("add-prospect", {
-    user: user,
-  });
-};
-
-exports.postAddprospectpage = (req, res, next) => {
-  const {
-    name,
-    birthday,
-    address,
-    contactno,
-    familydetails,
-    moredetails,
-  } = req.body;
-  const prospect = new Prospect({
-    name: name,
-    birthday: birthday,
-    address: address,
-    contactno: contactno,
-    familydetails: familydetails,
-    moredetails: moredetails,
-    agent: req.session.user._id,
-  });
-  Prospect.findOne(
-    {
-      name: name,
-    },
-    (err, prospector) => {
-      if (err) {
-        console.log(err);
-      } else {
-        if (!prospector) {
-          prospect
-            .save()
-            .then((response) => {
-              console.log(response);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          res.redirect("/prospects");
-        } else {
-          res.redirect("/prospects/add-prospect");
-        }
-      }
-    }
-  );
-};
+module.exports = router;

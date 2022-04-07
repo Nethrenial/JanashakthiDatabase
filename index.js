@@ -1,25 +1,22 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const flash = require("connect-flash");
 
-//cCONSTANTS
-const URI =
-  "mongodb+srv://nethrenial:1234@janshakthi-prospect-dat.izszc.mongodb.net/janashakthi?w=majority";
-
+const { config } = require("dotenv");
+config();
+const URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
-//
 
-const userRoutes = require("./routes/user");
-const prospectRoutes = require("./routes/prospects");
-const homeRoutes = require("./routes/home");
-const loginRoutes = require("./routes/auth.login");
-const logoutRoutes = require("./routes/auth.logout");
-const signupRoutes = require("./routes/auth.signup");
-const customerRoutes = require("./routes/customers");
+const userRoutes = require("./controllers/user.controller");
+const prospectRoutes = require("./controllers/prospects.controller");
+const homeRoutes = require("./controllers/home.controller");
+const loginRoutes = require("./controllers/auth_login.controller");
+const logoutRoutes = require("./controllers/auth_logout.controller");
+const signupRoutes = require("./controllers/auth_signup.controller");
+const customerRoutes = require("./controllers/customers.controller");
 const app = express();
 
 const store = new MongoDBStore({
@@ -30,7 +27,7 @@ const store = new MongoDBStore({
 app.set("view engine", "ejs");
 app.set("views", "views");
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: false,
   })
 );
@@ -43,6 +40,7 @@ app.use(
     store: store,
   })
 );
+
 app.use(flash());
 app.use("/user", userRoutes);
 app.use("/prospects", prospectRoutes);

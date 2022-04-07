@@ -1,16 +1,8 @@
-exports.getHomepage = (req, res, next) => {
-  // req.session.destroy((err) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     res.status(200).render("index");
-  //   }
-  // });
-  const user = req.session.user;
-  if (user) {
-    res.redirect("user");
-  } else {
-    console.log("Not logged in");
-    res.render("index");
-  }
-};
+const express = require("express");
+const homeController = require("../services/home.service");
+
+const router = express.Router();
+
+router.get("/", homeController.getHomepage);
+
+module.exports = router;
